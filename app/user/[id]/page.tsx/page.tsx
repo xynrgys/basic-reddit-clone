@@ -1,6 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
 
-export default async function UserProfile({ params }) {
+interface PageProps {
+  params: { id: string };
+}
+
+export default async function UserProfile({ params }: PageProps) {
   const supabase = createClient()
 
   const { data: user } = await supabase
