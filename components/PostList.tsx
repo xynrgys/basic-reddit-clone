@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { createClient } from "@/utils/supabase/client"
 import Link from 'next/link'
+import { Post } from '@/types'
 
-interface Post {
+export interface Post {
   id: string;
   title: string;
   content: string;
