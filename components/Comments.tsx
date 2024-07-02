@@ -1,10 +1,19 @@
-'use client'
-
 import { useState, useEffect } from 'react'
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client"
 
-export default function Comments({ postId }) {
-  const [comments, setComments] = useState([])
+interface CommentsProps {
+  postId: string;
+}
+
+interface Comment {
+  id: string;
+  content: string;
+  user_id: string;
+  created_at: string;
+}
+
+export default function Comments({ postId }: CommentsProps) {
+  const [comments, setComments] = useState<Comment[]>([])
   const [newComment, setNewComment] = useState('')
   const supabase = createClient()
 
@@ -20,10 +29,10 @@ export default function Comments({ postId }) {
       .order('created_at', { ascending: true })
 
     if (error) console.error('Error fetching comments:', error)
-    else setComments(data)
+    else setComments(data || [])
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const { data: user } = await supabase.auth.getUser()
     
