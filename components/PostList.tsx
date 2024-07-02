@@ -1,15 +1,25 @@
-'use client'
-
 import { useState } from 'react'
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client"
 import Link from 'next/link'
 
-export default function PostList({ initialPosts }) {
-  const [posts, setPosts] = useState(initialPosts)
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  subreddit_name: string;
+  upvotes: number;
+}
+
+interface PostListProps {
+  initialPosts: Post[];
+}
+
+export default function PostList({ initialPosts }: PostListProps) {
+  const [posts, setPosts] = useState<Post[]>(initialPosts)
   const supabase = createClient()
 
-  const handleUpvote = async (postId) => {
-    const { data: user } = await supabase.auth.getUser()
+  const handleUpvote = async (postId: string) => {
+    const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
       alert('You must be logged in to upvote')
