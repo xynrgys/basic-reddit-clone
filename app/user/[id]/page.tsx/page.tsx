@@ -4,6 +4,24 @@ interface PageProps {
   params: { id: string };
 }
 
+interface Subreddit {
+  id: string;
+  name: string;
+}
+
+interface Subscription {
+  subreddits: Subreddit;
+}
+
+interface Post {
+  id: string;
+  title: string;
+}
+
+interface Upvote {
+  posts: Post;
+}
+
 export default async function UserProfile({ params }: PageProps) {
   const supabase = createClient()
 
@@ -33,7 +51,7 @@ export default async function UserProfile({ params }: PageProps) {
       <h2>Subscribed Subreddits</h2>
       <ul>
         {subscriptions && subscriptions.length > 0 ? (
-          subscriptions.map((sub) => (
+          subscriptions.map((sub: Subscription) => (
             <li key={sub.subreddits.id}>{sub.subreddits.name}</li>
           ))
         ) : (
@@ -43,7 +61,7 @@ export default async function UserProfile({ params }: PageProps) {
       <h2>Upvoted Posts</h2>
       <ul>
         {upvotedPosts && upvotedPosts.length > 0 ? (
-          upvotedPosts.map((upvote) => (
+          upvotedPosts.map((upvote: Upvote) => (
             <li key={upvote.posts.id}>{upvote.posts.title}</li>
           ))
         ) : (
