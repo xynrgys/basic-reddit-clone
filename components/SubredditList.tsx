@@ -1,11 +1,16 @@
-'use client'
+'use client';
 
 import { useState, useEffect } from 'react'
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client"
 import Link from 'next/link'
 
+interface Subreddit {
+  id: string;
+  name: string;
+}
+
 export default function SubredditList() {
-  const [subreddits, setSubreddits] = useState([])
+  const [subreddits, setSubreddits] = useState<Subreddit[]>([])
   const supabase = createClient()
 
   useEffect(() => {
@@ -13,10 +18,10 @@ export default function SubredditList() {
       const { data, error } = await supabase
         .from('subreddits')
         .select('*')
-        .order('name')
-      
+        .order('name', { ascending: true })
+
       if (error) console.error('Error fetching subreddits:', error)
-      else setSubreddits(data)
+      else setSubreddits(data || [])
     }
 
     fetchSubreddits()
