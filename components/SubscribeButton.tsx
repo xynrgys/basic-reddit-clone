@@ -1,33 +1,40 @@
-'use client'
+'use client';
 
 import { useState, useEffect } from 'react'
 import { createClient } from "@/utils/supabase/client";
 
-export default function SubscribeButton({ subredditId }) {
+interface SubscribeButtonProps {
+  subredditId: string;
+}
+
+export default function SubscribeButton({ subredditId }: SubscribeButtonProps) {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
+    const checkSubscription = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data, error } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('subreddit_id', subredditId)
+          .single()
+
+        if (error) {
+          console.error('Error checking subscription:', error)
+        } else {
+          setIsSubscribed(!!data)
+        }
+      }
+    }
+
     checkSubscription()
-  }, [subredditId])
-
-  const checkSubscription = async () => {
-    const { data: user } = await supabase.auth.getUser()
-    if (!user) return
-
-    const { data, error } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('subreddit_id', subredditId)
-      .single()
-
-    if (error) console.error('Error checking subscription:', error)
-    else setIsSubscribed(!!data)
-  }
+  }, [subredditId, supabase])
 
   const handleSubscribe = async () => {
-    const { data: user } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       alert('You must be logged in to subscribe')
       return
@@ -40,15 +47,21 @@ export default function SubscribeButton({ subredditId }) {
         .eq('user_id', user.id)
         .eq('subreddit_id', subredditId)
 
-      if (error) console.error('Error unsubscribing:', error)
-      else setIsSubscribed(false)
+      if (error) {
+        console.error('Error unsubscribing:', error)
+      } else {
+        setIsSubscribed(false)
+      }
     } else {
       const { error } = await supabase
         .from('subscriptions')
         .insert({ user_id: user.id, subreddit_id: subredditId })
 
-      if (error) console.error('Error subscribing:', error)
-      else setIsSubscribed(true)
+      if (error) {
+        console.error('Error subscribing:', error)
+      } else {
+        setIsSubscribed(true)
+      }
     }
   }
 
