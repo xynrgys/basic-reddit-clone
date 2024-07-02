@@ -11,28 +11,38 @@ interface CreatePostProps {
 export default function CreatePost({ subredditId }: CreatePostProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [error, setError] = useState('')
   const supabase = createClient()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const { data: { user } } = await supabase.auth.getUser()
+    setError('')
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
     
-    if (!user) {
-      alert('You must be logged in to create a post')
+    if (userError || !user) {
+      setError('You must be logged in to create a post')
       return
     }
 
-    const { data, error } = await supabase
+    const { data, error: insertError } = await supabase
       .from('posts')
-      .insert({ title, content, user_id: user.id, subreddit_id: subredditId })
+      .insert({ 
+        title,
+        content,
+        user_id: user.id,
+        subreddit_id: subredditId
+      })
+      .select()
 
-    if (error) {
-      alert('Error creating post: ' + error.message)
-    } else {
-      router.refresh()
+    if (insertError) {
+      console.error('Error creating post:', insertError)
+      setError('Error creating post: ' + insertError.message)
+    } else if (data) {
       setTitle('')
       setContent('')
+      router.refresh() // This will refresh the current page, showing the new post
     }
   }
 
@@ -49,7 +59,9 @@ export default function CreatePost({ subredditId }: CreatePostProps) {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Post content"
+        required
       />
+      {error && <p style={{color: 'red'}}>{error}</p>}
       <button type="submit">Create Post</button>
     </form>
   )

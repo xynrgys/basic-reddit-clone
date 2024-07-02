@@ -1,5 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
+import CreatePost from '@/components/CreatePost'
+import PostList from '@/components/PostList'
 
 export default async function SubredditPage({ params }: { params: { name: string } }) {
   const supabase = createClient()
@@ -14,11 +16,19 @@ export default async function SubredditPage({ params }: { params: { name: string
     notFound()
   }
 
+  // Fetch posts for this subreddit
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('subreddit_id', subreddit.id)
+    .order('created_at', { ascending: false })
+
   return (
     <div>
       <h1>{subreddit.name}</h1>
       <p>{subreddit.description}</p>
-      {/* Add more subreddit details and functionality here */}
+      <CreatePost subredditId={subreddit.id} />
+      <PostList initialPosts={posts || []} />
     </div>
   )
 }
