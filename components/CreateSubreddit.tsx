@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { createClient } from "@/utils/supabase/client"
 import { useRouter } from 'next/navigation'
@@ -8,20 +10,28 @@ export default function CreateSubreddit() {
   const supabase = createClient()
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const { data: { user } } = await supabase.auth.getUser()
     
-    if (!user) {
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    
+    if (userError || !user) {
       alert('You must be logged in to create a subreddit')
       return
     }
 
+    // Insert the new subreddit
     const { data, error } = await supabase
       .from('subreddits')
-      .insert({ name, description, created_by: user.id })
+      .insert({ 
+        name, 
+        description, 
+        created_by: user.id
+      })
 
     if (error) {
+      console.error('Error creating subreddit:', error)
       alert('Error creating subreddit: ' + error.message)
     } else {
       router.push(`/r/${name}`)
@@ -33,13 +43,13 @@ export default function CreateSubreddit() {
       <input
         type="text"
         value={name}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+        onChange={(e) => setName(e.target.value)}
         placeholder="Subreddit name"
         required
       />
       <textarea
         value={description}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+        onChange={(e) => setDescription(e.target.value)}
         placeholder="Description"
       />
       <button type="submit">Create Subreddit</button>

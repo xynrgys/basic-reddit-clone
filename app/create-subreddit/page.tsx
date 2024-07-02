@@ -1,11 +1,21 @@
-'use client'
-
+// In your app/create-subreddit/page.tsx
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 import CreateSubreddit from '@/components/CreateSubreddit'
 
-export default function CreateSubredditPage() {
+export default async function CreateSubredditPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  console.log('Current user:', user)
+
+
+  if (!user) {
+    redirect('/login')
+  }
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Create a New Subreddit</h1>
+    <div>
+      <h1>Create a New Subreddit</h1>
       <CreateSubreddit />
     </div>
   )
