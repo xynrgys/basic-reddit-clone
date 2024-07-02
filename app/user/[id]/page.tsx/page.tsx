@@ -9,17 +9,9 @@ interface Subreddit {
   name: string;
 }
 
-interface Subscription {
-  subreddits: Subreddit;
-}
-
 interface Post {
   id: string;
   title: string;
-}
-
-interface Upvote {
-  posts: Post;
 }
 
 export default async function UserProfile({ params }: PageProps) {
@@ -51,9 +43,12 @@ export default async function UserProfile({ params }: PageProps) {
       <h2>Subscribed Subreddits</h2>
       <ul>
         {subscriptions && subscriptions.length > 0 ? (
-          subscriptions.map((sub: { subreddits: Subreddit }) => (
-            <li key={sub.subreddits.id}>{sub.subreddits.name}</li>
-          ))
+          subscriptions.map((sub: any) => {
+            const subreddit = Array.isArray(sub.subreddits) ? sub.subreddits[0] : sub.subreddits;
+            return (
+              <li key={subreddit?.id}>{subreddit?.name}</li>
+            );
+          })
         ) : (
           <li>No subscriptions yet</li>
         )}
@@ -61,9 +56,12 @@ export default async function UserProfile({ params }: PageProps) {
       <h2>Upvoted Posts</h2>
       <ul>
         {upvotedPosts && upvotedPosts.length > 0 ? (
-          upvotedPosts.map((upvote: { posts: Post }) => (
-            <li key={upvote.posts.id}>{upvote.posts.title}</li>
-          ))
+          upvotedPosts.map((upvote: any) => {
+            const post = Array.isArray(upvote.posts) ? upvote.posts[0] : upvote.posts;
+            return (
+              <li key={post?.id}>{post?.title}</li>
+            );
+          })
         ) : (
           <li>No upvoted posts yet</li>
         )}
