@@ -1,3 +1,6 @@
+import { createClient } from '@/utils/supabase/server'
+import { notFound } from 'next/navigation'
+
 export default async function SubredditPage({ params }: { params: { name: string } }) {
   const supabase = createClient()
 
