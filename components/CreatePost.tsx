@@ -1,18 +1,20 @@
-'use client'
-
 import { useState } from 'react'
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client"
 import { useRouter } from 'next/navigation'
 
-export default function CreatePost({ subredditId }) {
+interface CreatePostProps {
+  subredditId: string;
+}
+
+export default function CreatePost({ subredditId }: CreatePostProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const supabase = createClient()
   const router = useRouter()
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const { data: user } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
       alert('You must be logged in to create a post')
