@@ -1,6 +1,15 @@
 import Link from 'next/link'
 import { Post } from '@/app/types/post'
 
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  user_id: string;
+  subreddit_id: string;
+  subreddit_name: string;
+  created_at: string;
+}
 
 interface PostListProps {
   initialPosts: Post[]
