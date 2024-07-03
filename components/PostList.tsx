@@ -17,17 +17,15 @@ interface PostListProps {
 }
 
 export default function PostList({ initialPosts }: PostListProps) {
-  const [posts, setPosts] = useState<Post[]>(initialPosts)
-
   return (
     <div>
-      {posts.map((post) => (
+      {initialPosts.map((post) => (
         <div key={post.id}>
-          <h3>{post.title}</h3>
-          <p>{post.content.substring(0, 100)}...</p>
-          <Link href={`/r/${post.subreddit_id}/posts/${post.id}`}>
-            Read more
+          <Link href={`/r/${post.subreddit_name}/posts/${post.id}`}>
+            <h2>{post.title}</h2>
           </Link>
+          <p>{post.content}</p>
+          {/* Render other post details */}
         </div>
       ))}
     </div>
