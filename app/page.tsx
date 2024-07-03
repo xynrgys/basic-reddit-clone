@@ -10,7 +10,6 @@ export interface Post {
   content: string;
   user_id: string;
   subreddit_id: string;
-  subreddit_name: string;
   created_at: string;
 }
 
@@ -54,6 +53,11 @@ export default async function Home() {
           <Link href="/create-subreddit" className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
             Create Subreddit
           </Link>
+          {user && (
+            <Link href={`/user/${user.id}`} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+              Profile
+            </Link>
+          )}
         </div>
       </div>
       <SubredditList />
