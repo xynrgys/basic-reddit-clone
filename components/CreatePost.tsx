@@ -40,14 +40,22 @@ export default function CreatePost({ subredditId, subredditName }: CreatePostPro
     if (error) {
       console.error('Error creating post:', error)
       alert('Error creating post: ' + error.message)
-    } else if (data !== null && data.length > 0) {
-      // Check if data is not null and has at least one element
-      router.push(`/r/${subredditName}/posts/${data[0].id}`)
+    } else if (data !== null) {
+      // Cast data to the expected type
+      const insertedData = data as { id: string }[]
+  
+      if (insertedData.length > 0) {
+        router.push(`/r/${subredditName}/posts/${insertedData[0].id}`)
+      } else {
+        console.error('Error creating post: No data returned')
+        alert('Error creating post: No data returned')
+      }
     } else {
       console.error('Error creating post: No data returned')
       alert('Error creating post: No data returned')
     }
   }
+  
   
   
 
