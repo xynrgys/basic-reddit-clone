@@ -40,7 +40,7 @@ export default function CreatePost({ subredditId, subredditName }: CreatePostPro
     if (error) {
       console.error('Error creating post:', error)
       alert('Error creating post: ' + error.message)
-    } else if (data && data.length > 0) {
+    } else if (data !== null && data.length > 0) {
       // Check if data is not null and has at least one element
       router.push(`/r/${subredditName}/posts/${data[0].id}`)
     } else {
@@ -48,6 +48,7 @@ export default function CreatePost({ subredditId, subredditName }: CreatePostPro
       alert('Error creating post: No data returned')
     }
   }
+  
   
 
   return (
