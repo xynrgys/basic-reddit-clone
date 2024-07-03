@@ -56,7 +56,7 @@ export default async function UserProfile({ params }: PageProps) {
 
   return (
     <div>
-      <h1>{user.username}'s Profile</h1>
+      <h1>{user.email}'s Profile</h1>
       <h2>Total Upvotes Received: {totalUpvotesReceived}</h2>
       
       <h2>Subscribed Subreddits</h2>
