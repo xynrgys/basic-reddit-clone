@@ -10,6 +10,7 @@ export interface Post {
   content: string;
   user_id: string;
   subreddit_id: string;
+  subreddit_name: string;
   created_at: string;
 }
 

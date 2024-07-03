@@ -1,13 +1,15 @@
 import Link from 'next/link'
 
-interface Post {
+export interface Post {
   id: string;
   title: string;
   content: string;
+  user_id: string;
   subreddit_id: string;
-  subreddit_name: string; // Add this property
-  upvotes: number;
+  subreddit_name: string;
+  created_at: string;
 }
+
 
 interface PostListProps {
   initialPosts: Post[]

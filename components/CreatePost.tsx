@@ -4,45 +4,39 @@ import { useState } from 'react'
 import { createClient } from "@/utils/supabase/client"
 import { useRouter } from 'next/navigation'
 
-interface CreatePostProps {
-  subredditId: string;
-}
-
-export default function CreatePost({ subredditId }: CreatePostProps) {
+export default function CreatePost({ subredditId, subredditName }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [error, setError] = useState('')
   const supabase = createClient()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-
+    
+    // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     
     if (userError || !user) {
-      setError('You must be logged in to create a post')
+      alert('You must be logged in to create a post')
       return
     }
 
-    const { data, error: insertError } = await supabase
+    // Insert the new post
+    const { data, error } = await supabase
       .from('posts')
       .insert({ 
         title,
         content,
         user_id: user.id,
-        subreddit_id: subredditId
+        subreddit_id,
+        subreddit_name, // Add subreddit_name here
       })
-      .select()
 
-    if (insertError) {
-      console.error('Error creating post:', insertError)
-      setError('Error creating post: ' + insertError.message)
-    } else if (data) {
-      setTitle('')
-      setContent('')
-      router.refresh() // This will refresh the current page, showing the new post
+    if (error) {
+      console.error('Error creating post:', error)
+      alert('Error creating post: ' + error.message)
+    } else {
+      router.push(`/r/${subredditName}/posts/${data[0].id}`)
     }
   }
 
@@ -59,9 +53,7 @@ export default function CreatePost({ subredditId }: CreatePostProps) {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Post content"
-        required
       />
-      {error && <p style={{color: 'red'}}>{error}</p>}
       <button type="submit">Create Post</button>
     </form>
   )
