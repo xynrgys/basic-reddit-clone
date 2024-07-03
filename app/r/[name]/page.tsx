@@ -8,7 +8,7 @@ export default async function SubredditPage({ params }: { params: { name: string
 
   const { data: subreddit, error: subredditError } = await supabase
     .from('subreddits')
-    .select('id, name, description') // Include the 'id' property here
+    .select('id, name, description')
     .eq('name', params.name)
     .single()
 
@@ -20,14 +20,14 @@ export default async function SubredditPage({ params }: { params: { name: string
   const { data: posts } = await supabase
     .from('posts')
     .select('*')
-    .eq('subreddit_id', subreddit.id) // Use subreddit.id here
+    .eq('subreddit_id', subreddit.id)
     .order('created_at', { ascending: false })
 
   return (
     <div>
       <h1>{subreddit.name}</h1>
       <p>{subreddit.description}</p>
-      <CreatePost subredditId={subreddit.id} />
+      <CreatePost subredditId={subreddit.id} subredditName={subreddit.name} />
       <PostList initialPosts={posts || []} />
     </div>
   )
