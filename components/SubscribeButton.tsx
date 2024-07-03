@@ -53,12 +53,17 @@ export default function SubscribeButton({ subredditId }: SubscribeButtonProps) {
         setIsSubscribed(false)
       }
     } else {
+      console.log('Inserting subscription...') // Add this line
+
       const { error } = await supabase
         .from('subscriptions')
         .insert({ user_id: user.id, subreddit_id: subredditId })
 
+      console.log('Insert operation completed:', error) // Add this line
+
       if (error) {
         console.error('Error subscribing:', error)
+        // ... (rest of the error handling code)
       } else {
         setIsSubscribed(true)
       }
