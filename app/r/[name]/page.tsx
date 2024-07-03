@@ -7,8 +7,6 @@ import SubscribeButton from '@/components/SubscribeButton'
 export default async function SubredditPage({ params }: { params: { name: string } }) {
   const supabase = createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
-
   const { data: subreddit, error: subredditError } = await supabase
     .from('subreddits')
     .select('id, name, description')
@@ -30,7 +28,7 @@ export default async function SubredditPage({ params }: { params: { name: string
     <div>
       <h1>{subreddit.name}</h1>
       <p>{subreddit.description}</p>
-      {user && <SubscribeButton subredditId={subreddit.id} subredditName={subreddit.name} userId={user.id} />}
+      <SubscribeButton subredditId={subreddit.id} />
       <CreatePost subredditId={subreddit.id} subredditName={subreddit.name} />
       <PostList initialPosts={posts || []} />
     </div>
