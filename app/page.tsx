@@ -3,7 +3,7 @@ import SubredditList from '@/components/SubredditList'
 import PostList from '@/components/PostList'
 import Link from 'next/link'
 import { SubmitButton } from './submit-button'
-import { Post } from '@/app/types'
+import { Post } from '../types'
 
 export default async function Home() {
   const supabase = createClient()
