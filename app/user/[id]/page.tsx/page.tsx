@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { Post } from '@/app/types'
 
 interface PageProps {
   params: { id: string };
@@ -8,17 +9,6 @@ interface Subreddit {
   id: string;
   name: string;
 }
-
-export interface Post {
-  id: string;
-  title: string;
-  content: string;
-  user_id: string;
-  subreddit_id: string;
-  subreddit_name: string; // Add this property
-  created_at: string;
-}
-
 
 interface Profile {
   id: string;
