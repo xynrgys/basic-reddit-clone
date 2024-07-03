@@ -1,46 +1,30 @@
-import { createClient } from '@/utils/supabase/server'
-import { notFound } from 'next/navigation'
+import Link from 'next/link'
 
-interface PageProps {
-  params: {
-    subredditId: string
-    postId: string
-  }
+export interface Post {
+  id: string;
+  title: string;
+  content: string;
+  user_id: string;
+  subreddit_id: string;
+  created_at: string;
 }
 
-export default async function PostPage({ params }: PageProps) {
-  const { subredditId, postId } = params
-  const supabase = createClient()
+interface PostListProps {
+  initialPosts: Post[]
+}
 
-  // Fetch the subreddit data based on the subredditId
-  const { data: subreddit, error: subredditError } = await supabase
-    .from('subreddits')
-    .select('name')
-    .eq('id', subredditId)
-    .single()
-
-  if (subredditError || !subreddit) {
-    notFound()
-  }
-
-  // Fetch the post data based on the postId and subredditId
-  const { data: post, error: postError } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('id', postId)
-    .eq('subreddit_id', subredditId)
-    .single()
-
-  if (postError || !post) {
-    notFound()
-  }
-
+export default function PostList({ initialPosts }: PostListProps) {
   return (
     <div>
-      <h1>{post.title}</h1>
-      <p>Subreddit: {subreddit.name}</p>
-      <p>{post.content}</p>
-      {/* Render other post details */}
+      {initialPosts.map((post) => (
+        <div key={post.id}>
+          <Link href={`/r/${post.subreddit_id}/posts/${post.id}`}>
+            <h2>{post.title}</h2>
+          </Link>
+          <p>{post.content}</p>
+          {/* Render other post details */}
+        </div>
+      ))}
     </div>
   )
 }

@@ -13,8 +13,11 @@ export interface Post {
   created_at: string;
 }
 
+interface HomeProps {
+  initialPosts: Post[];
+}
 
-export default async function Home() {
+export default async function Home({ initialPosts }: HomeProps) {
   const supabase = createClient()
   
   const { data: posts } = await supabase
@@ -57,7 +60,7 @@ export default async function Home() {
         </div>
       </div>
       <SubredditList />
-      <PostList initialPosts={safePosts} />
+      <PostList initialPosts={initialPosts} />
     </main>
   )
 }
