@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
-import { Post } from '../types'
+import { Post } from '@/app/types/post'
+
 
 interface PageProps {
   params: { id: string };

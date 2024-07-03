@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Post } from '../types'
+import { Post } from '@/app/types/post'
+
 
 interface PostListProps {
   initialPosts: Post[]
