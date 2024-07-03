@@ -4,7 +4,12 @@ import { useState } from 'react'
 import { createClient } from "@/utils/supabase/client"
 import { useRouter } from 'next/navigation'
 
-export default function CreatePost({ subredditId, subredditName }) {
+interface CreatePostProps {
+  subredditId: string;
+  subredditName: string;
+}
+
+export default function CreatePost({ subredditId, subredditName }: CreatePostProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const supabase = createClient()
@@ -28,8 +33,8 @@ export default function CreatePost({ subredditId, subredditName }) {
         title,
         content,
         user_id: user.id,
-        subreddit_id,
-        subreddit_name, // Add subreddit_name here
+        subreddit_id: subredditId,
+        subreddit_name: subredditName,
       })
 
     if (error) {
