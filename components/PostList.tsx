@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 interface Post {
   id: string;
@@ -15,18 +18,28 @@ interface PostListProps {
 }
 
 export default function PostList({ initialPosts }: PostListProps) {
+  useEffect(() => {
+    console.log('Initial posts:', initialPosts)
+  }, [initialPosts])
+
   return (
     <div>
-      {initialPosts.map((post) => (
-        <div key={post.id}>
-          <Link href={`/r/${post.subreddit_name}/posts/${post.id}`}>
-            <h2>subreddit: {post.subreddit_name}</h2>
-            <h2 className="font-bold">{post.title}</h2>
-          </Link>
-          <p>{post.content}</p>
-          {/* Render other post details */}
-        </div>
-      ))}
+      {initialPosts.map((post) => {
+        console.log('Rendering post:', post)
+        const href = `/r/${post.subreddit_name}/posts/${post.id}`
+        console.log('Generated href:', href)
+
+        return (
+          <div key={post.id}>
+            <Link href={href}>
+              <h2>subreddit: {post.subreddit_name}</h2>
+              <h2 className="font-bold">{post.title}</h2>
+            </Link>
+            <p>{post.content}</p>
+            {/* Render other post details */}
+          </div>
+        )
+      })}
     </div>
   )
 }
