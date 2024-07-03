@@ -2,9 +2,12 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import CreatePost from '@/components/CreatePost'
 import PostList from '@/components/PostList'
+import SubscribeButton from '@/components/SubscribeButton'
 
 export default async function SubredditPage({ params }: { params: { name: string } }) {
   const supabase = createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { data: subreddit, error: subredditError } = await supabase
     .from('subreddits')
@@ -27,6 +30,7 @@ export default async function SubredditPage({ params }: { params: { name: string
     <div>
       <h1>{subreddit.name}</h1>
       <p>{subreddit.description}</p>
+      {user && <SubscribeButton subredditId={subreddit.id} subredditName={subreddit.name} userId={user.id} />}
       <CreatePost subredditId={subreddit.id} subredditName={subreddit.name} />
       <PostList initialPosts={posts || []} />
     </div>
