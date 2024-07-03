@@ -1,12 +1,12 @@
 import Link from 'next/link'
 
-export interface Post {
+interface Post {
   id: string;
   title: string;
   content: string;
-  user_id: string;
   subreddit_id: string;
-  created_at: string;
+  subreddit_name: string; // Add this property
+  upvotes: number;
 }
 
 interface PostListProps {
@@ -18,7 +18,8 @@ export default function PostList({ initialPosts }: PostListProps) {
     <div>
       {initialPosts.map((post) => (
         <div key={post.id}>
-          <Link href={`/r/${post.subreddit_id}/posts/${post.id}`}>
+          <Link href={`/r/${post.subreddit_name}/posts/${post.id}`}>
+            <h2>subreddit: {post.subreddit_name}</h2>
             <h2>{post.title}</h2>
           </Link>
           <p>{post.content}</p>
