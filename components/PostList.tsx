@@ -1,19 +1,7 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
 
-export interface Post {
-  id: string;
-  title: string;
-  content: string;
-  user_id: string;
-  subreddit_id: string;
-  created_at: string;
-}
-
 interface PostListProps {
-  initialPosts: Post[];
+  initialPosts: Post[]
 }
 
 export default function PostList({ initialPosts }: PostListProps) {
@@ -21,7 +9,7 @@ export default function PostList({ initialPosts }: PostListProps) {
     <div>
       {initialPosts.map((post) => (
         <div key={post.id}>
-          <Link href={`/r/${post.subreddit_name}/posts/${post.id}`}>
+          <Link href={`/r/${post.subreddit_id}/posts/${post.id}`}>
             <h2>{post.title}</h2>
           </Link>
           <p>{post.content}</p>
