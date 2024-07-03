@@ -9,9 +9,11 @@ interface SubscribeButtonProps {
 
 export default function SubscribeButton({ subredditId }: SubscribeButtonProps) {
   const [isSubscribed, setIsSubscribed] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const supabase = createClient()
 
   useEffect(() => {
+    let isMounted = true;
     const checkSubscription = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -20,17 +22,18 @@ export default function SubscribeButton({ subredditId }: SubscribeButtonProps) {
           .select('*')
           .eq('user_id', user.id)
           .eq('subreddit_id', subredditId)
-          .single()
 
         if (error) {
           console.error('Error checking subscription:', error)
-        } else {
-          setIsSubscribed(!!data)
+        } else if (isMounted) {
+          setIsSubscribed(!!data && data.length > 0)
         }
       }
+      if (isMounted) setIsLoading(false)
     }
 
     checkSubscription()
+    return () => { isMounted = false }
   }, [subredditId, supabase])
 
   const handleSubscribe = async () => {
@@ -40,6 +43,7 @@ export default function SubscribeButton({ subredditId }: SubscribeButtonProps) {
       return
     }
 
+    setIsLoading(true)
     if (isSubscribed) {
       const { error } = await supabase
         .from('subscriptions')
@@ -49,29 +53,29 @@ export default function SubscribeButton({ subredditId }: SubscribeButtonProps) {
 
       if (error) {
         console.error('Error unsubscribing:', error)
+        alert('Failed to unsubscribe. Please try again.')
       } else {
         setIsSubscribed(false)
       }
     } else {
-      console.log('Inserting subscription...') // Add this line
-
       const { error } = await supabase
         .from('subscriptions')
         .insert({ user_id: user.id, subreddit_id: subredditId })
 
-      console.log('Insert operation completed:', error) // Add this line
-
       if (error) {
         console.error('Error subscribing:', error)
-        // ... (rest of the error handling code)
+        alert('Failed to subscribe. Please try again.')
       } else {
         setIsSubscribed(true)
       }
     }
+    setIsLoading(false)
   }
 
+  if (isLoading) return <button disabled>Loading...</button>
+
   return (
-    <button onClick={handleSubscribe}>
+    <button onClick={handleSubscribe} disabled={isLoading}>
       {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
     </button>
   )
