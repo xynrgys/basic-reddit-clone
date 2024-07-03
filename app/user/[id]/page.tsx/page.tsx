@@ -9,11 +9,16 @@ interface Subreddit {
   name: string;
 }
 
-interface Post {
+export interface Post {
   id: string;
   title: string;
-  upvotes: number;
+  content: string;
+  user_id: string;
+  subreddit_id: string;
+  subreddit_name: string; // Add this property
+  created_at: string;
 }
+
 
 interface Profile {
   id: string;
