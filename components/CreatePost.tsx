@@ -17,33 +17,38 @@ export default function CreatePost({ subredditId, subredditName }: CreatePostPro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+  
     // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
+  
     if (userError || !user) {
       alert('You must be logged in to create a post')
       return
     }
-
+  
     // Insert the new post
     const { data, error } = await supabase
       .from('posts')
-      .insert({ 
+      .insert({
         title,
         content,
         user_id: user.id,
         subreddit_id: subredditId,
         subreddit_name: subredditName,
       })
-
+  
     if (error) {
       console.error('Error creating post:', error)
       alert('Error creating post: ' + error.message)
-    } else {
+    } else if (data && data.length > 0) {
+      // Check if data is not null and has at least one element
       router.push(`/r/${subredditName}/posts/${data[0].id}`)
+    } else {
+      console.error('Error creating post: No data returned')
+      alert('Error creating post: No data returned')
     }
   }
+  
 
   return (
     <form onSubmit={handleSubmit}>
