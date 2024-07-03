@@ -21,7 +21,7 @@ export default function PostList({ initialPosts }: PostListProps) {
         <div key={post.id}>
           <Link href={`/r/${post.subreddit_name}/posts/${post.id}`}>
             <h2>subreddit: {post.subreddit_name}</h2>
-            <h2>{post.title}</h2>
+            <h2 class="font-bold">{post.title}</h2>
           </Link>
           <p>{post.content}</p>
           {/* Render other post details */}
