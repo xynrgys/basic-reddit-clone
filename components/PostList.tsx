@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Post } from '@/app/types/post'
 
 interface Post {
   id: string;
