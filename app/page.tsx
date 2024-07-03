@@ -4,13 +4,15 @@ import PostList from '@/components/PostList'
 import Link from 'next/link'
 import { SubmitButton } from './submit-button'
 
-interface Post {
+export interface Post {
   id: string;
   title: string;
   content: string;
-  subreddit_name: string;
-  upvotes: number;
+  user_id: string;
+  subreddit_id: string;
+  created_at: string;
 }
+
 
 export default async function Home() {
   const supabase = createClient()
