@@ -54,14 +54,6 @@ export default async function UserProfile({ params }: PageProps) {
     totalUpvotesReceived = totalUpvotesData.reduce((sum, post) => sum + (post.upvotes || 0), 0)
   }
 
-  // Fetch top 5 most upvoted posts by the user
-  const { data: topPosts, error: topPostsError } = await supabase
-    .from('posts')
-    .select('id, title, upvotes')
-    .eq('user_id', params.id)
-    .order('upvotes', { ascending: false })
-    .limit(5)
-
   if (!user) {
     return <div>User not found</div>
   }
@@ -71,17 +63,6 @@ export default async function UserProfile({ params }: PageProps) {
       <h1>{user.username}'s Profile</h1>
       <h2>Total Upvotes Received: {totalUpvotesReceived}</h2>
       
-      <h2>Top 5 Most Upvoted Posts</h2>
-      <ul>
-        {topPosts && topPosts.length > 0 ? (
-          topPosts.map((post: Post) => (
-            <li key={post.id}>{post.title} - {post.upvotes} upvotes</li>
-          ))
-        ) : (
-          <li>No posts yet</li>
-        )}
-      </ul>
-
       <h2>Subscribed Subreddits</h2>
       <ul>
         {subscriptions && subscriptions.length > 0 ? (
