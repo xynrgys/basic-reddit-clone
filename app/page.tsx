@@ -51,9 +51,6 @@ export default async function Home() {
           </Link>
         )}
         <div className="flex space-x-4">
-          <Link href="/create-post" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Create Post
-          </Link>
           <Link href="/create-subreddit" className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
             Create Subreddit
           </Link>
