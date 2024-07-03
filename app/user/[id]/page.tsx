@@ -27,11 +27,7 @@ interface Profile {
 export default async function UserProfile({ params }: PageProps) {
   const supabase = createClient()
 
-  const { data: user } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', params.id)
-    .single()
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { data: subscriptions } = await supabase
     .from('subscriptions')
