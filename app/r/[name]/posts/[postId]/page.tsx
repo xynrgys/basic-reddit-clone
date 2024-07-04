@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
-import Comments from '@/components/Comments'  // Adjust this import path as necessary
+import PostContent from '@/components/PostContent'  // We'll create this component
 
 interface PageProps {
   params: {
@@ -17,7 +17,10 @@ export default async function PostPage({ params }: PageProps) {
 
   const { data: post, error } = await supabase
     .from('posts')
-    .select('*')
+    .select(`
+      *,
+      vote_count:post_votes(sum(vote_type))
+    `)
     .eq('id', postId)
     .eq('subreddit_name', name)
     .single()
@@ -34,14 +37,10 @@ export default async function PostPage({ params }: PageProps) {
     notFound()
   }
 
+  // Calculate the vote count
+  const voteCount = post.vote_count?.[0]?.sum || 0;
+
   console.log('Post found:', post);
 
-  return (
-    <div>
-      <h1>{post.title}</h1>
-      <p>{post.content}</p>
-      {/* Render other post details */}
-      <Comments postId={postId} />
-    </div>
-  )
+  return <PostContent post={{...post, voteCount}} />
 }
