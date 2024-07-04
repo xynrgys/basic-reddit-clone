@@ -16,20 +16,18 @@ export default async function PostPage({ params }: PageProps) {
 
   console.log('Fetching post with:', { name, postId });
 
-  const { data: post, error } = await supabase
+  // Fetch post details
+  const { data: post, error: postError } = await supabase
     .from('posts')
-    .select(`
-      *,
-      vote_count:post_votes(sum(vote_type))
-    `)
+    .select('*')
     .eq('id', postId)
     .eq('subreddit_name', name)
     .single()
 
-  console.log('Query result:', { post, error });
+  console.log('Post query result:', { post, postError });
 
-  if (error) {
-    console.error('Error fetching post:', error);
+  if (postError) {
+    console.error('Error fetching post:', postError);
     notFound()
   }
 
@@ -38,10 +36,24 @@ export default async function PostPage({ params }: PageProps) {
     notFound()
   }
 
+  // Fetch and sum votes
+  const { data: voteData, error: voteError } = await supabase
+    .from('post_votes')
+    .select('vote_type')
+    .eq('post_id', postId)
+
+  console.log('Vote query result:', { voteData, voteError });
+
+  if (voteError) {
+    console.error('Error fetching votes:', voteError);
+    // You might want to handle this error differently
+  }
+
   // Calculate the vote count
-  const voteCount = post.vote_count?.[0]?.sum || 0;
+  const voteCount = voteData ? voteData.reduce((sum, vote) => sum + vote.vote_type, 0) : 0;
 
   console.log('Post found:', post);
+  console.log('Vote count:', voteCount);
 
   return (
     <div>
