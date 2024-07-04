@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import { createClient } from "@/utils/supabase/client"
 
@@ -24,11 +22,15 @@ export default function Comments({ postId }: CommentsProps) {
   }, [postId])
 
   const fetchComments = async () => {
+    console.log('Fetching comments for post:', postId);
     const { data, error } = await supabase
       .from('comments')
       .select('*')
       .eq('post_id', postId)
       .order('created_at', { ascending: true })
+
+    console.log('Fetched comments:', data);
+    console.log('Fetch error:', error);
 
     if (error) console.error('Error fetching comments:', error)
     else setComments(data || [])
@@ -43,9 +45,12 @@ export default function Comments({ postId }: CommentsProps) {
       return
     }
 
+    console.log('Submitting comment:', newComment);
     const { data, error } = await supabase
       .from('comments')
       .insert({ content: newComment, user_id: user.id, post_id: postId })
+
+    console.log('Comment submission result:', { data, error });
 
     if (error) {
       alert('Error creating comment: ' + error.message)
@@ -57,7 +62,7 @@ export default function Comments({ postId }: CommentsProps) {
 
   return (
     <div>
-      <h3>Comments</h3>
+      <h3>Comments ({comments.length})</h3>
       {comments.map((comment) => (
         <div key={comment.id}>
           <p>{comment.content}</p>
