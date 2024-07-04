@@ -21,11 +21,17 @@ export default function PostPage({ params }: PageProps) {
         console.log('Fetching post with ID:', postId);
         const response = await fetch(`/api/posts/${postId}`);
         console.log('Response status:', response.status);
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Error response:', errorText);
-          throw new Error(`Failed to fetch post: ${response.status} ${errorText}`);
+        
+        if (response.status === 404) {
+          setError('Post not found');
+          return;
         }
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'An error occurred');
+        }
+        
         const data = await response.json();
         console.log('Fetched post data:', data);
         setPost(data);
@@ -37,6 +43,7 @@ export default function PostPage({ params }: PageProps) {
   
     fetchPost();
   }, [postId]);
+  
   
 
   if (error) {
