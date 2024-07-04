@@ -42,16 +42,23 @@ export default async function UserProfile({ params }: PageProps) {
     .eq('vote_type', 1)  // 1 represents an upvote
 
   // Fetch total upvotes received by the user
-  const { data: totalUpvotesData, error: totalUpvotesError } = await supabase
-    .from('post_votes')
-    .select('vote_type')
-    .eq('posts.user_id', params.id)
-    .eq('vote_type', 1)
-    .join('posts', { 'posts.id': 'post_votes.post_id' })
+  const { data: userPosts, error: userPostsError } = await supabase
+    .from('posts')
+    .select('id')
+    .eq('user_id', params.id)
 
   let totalUpvotesReceived = 0
-  if (!totalUpvotesError && totalUpvotesData) {
-    totalUpvotesReceived = totalUpvotesData.length
+  if (!userPostsError && userPosts) {
+    const postIds = userPosts.map(post => post.id)
+    const { count, error: countError } = await supabase
+      .from('post_votes')
+      .select('*', { count: 'exact', head: true })
+      .in('post_id', postIds)
+      .eq('vote_type', 1)
+
+    if (!countError) {
+      totalUpvotesReceived = count || 0
+    }
   }
 
   if (!user) {
