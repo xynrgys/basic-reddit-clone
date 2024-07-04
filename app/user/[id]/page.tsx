@@ -86,7 +86,7 @@ export default async function UserProfile({ params }: PageProps) {
       <h2>Subscribed Subreddits</h2>
       <ul>
         {subscriptions && subscriptions.length > 0 ? (
-          subscriptions.map((sub: Subscription) => (
+          subscriptions.map((sub: { subreddit: Subreddit }) => (
             <li key={sub.subreddit.id}>{sub.subreddit.name}</li>
           ))
         ) : (
