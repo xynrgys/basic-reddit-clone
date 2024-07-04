@@ -86,14 +86,15 @@ export default async function UserProfile({ params }: PageProps) {
       <h2>Subscribed Subreddits</h2>
       <ul>
         {subscriptions && subscriptions.length > 0 ? (
-          subscriptions.map((sub: { subreddit: Subreddit }) => (
-            <li key={sub.subreddit.id}>{sub.subreddit.name}</li>
-          ))
+          subscriptions.flatMap((sub: Subscription) => 
+            sub.subreddit.map((subreddit: Subreddit) => (
+              <li key={subreddit.id}>{subreddit.name}</li>
+            ))
+          )
         ) : (
           <li>No subscriptions yet</li>
         )}
       </ul>
-
       <h2>Upvoted Posts</h2>
       <ul>
         {upvotedPosts && upvotedPosts.length > 0 ? (
