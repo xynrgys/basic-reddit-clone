@@ -1,6 +1,5 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+import { createClient } from '@/utils/supabase/server'
+import { notFound } from 'next/navigation'
 import Comments from '@/components/Comments'  // Adjust this import path as necessary
 
 interface PageProps {
@@ -10,49 +9,32 @@ interface PageProps {
   }
 }
 
-export default function PostPage({ params }: PageProps) {
+export default async function PostPage({ params }: PageProps) {
   const { name, postId } = params
-  const [post, setPost] = useState<any>(null)
-  const [error, setError] = useState<string | null>(null)
+  const supabase = createClient()
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        console.log('Fetching post with ID:', postId);
-        const response = await fetch(`/api/posts/${postId}`);
-        console.log('Response status:', response.status);
-        
-        if (response.status === 404) {
-          setError('Post not found');
-          return;
-        }
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'An error occurred');
-        }
-        
-        const data = await response.json();
-        console.log('Fetched post data:', data);
-        setPost(data);
-      } catch (err) {
-        console.error('Fetch error:', err);
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      }
-    };
-  
-    fetchPost();
-  }, [postId]);
-  
-  
+  console.log('Fetching post with:', { name, postId });
+
+  const { data: post, error } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('id', postId)
+    .eq('subreddit_name', name)
+    .single()
+
+  console.log('Query result:', { post, error });
 
   if (error) {
-    return <div>Error: {error}</div>
+    console.error('Error fetching post:', error);
+    notFound()
   }
 
   if (!post) {
-    return <div>Loading...</div>
+    console.log('No post found');
+    notFound()
   }
+
+  console.log('Post found:', post);
 
   return (
     <div>
