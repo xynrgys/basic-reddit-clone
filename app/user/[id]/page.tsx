@@ -19,6 +19,10 @@ interface Subreddit {
   name: string;
 }
 
+interface Subscription {
+  subreddit: Subreddit;
+}
+
 interface Profile {
   id: string;
   username: string;
@@ -29,12 +33,21 @@ export default async function UserProfile({ params }: PageProps) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: subscriptions } = await supabase
+  // Fetch subscriptions with subreddit details
+  const { data: subscriptions, error: subscriptionError } = await supabase
     .from('subscriptions')
-    .select('subreddits(*)')
+    .select(`
+      subreddit:subreddits (
+        id,
+        name
+      )
+    `)
     .eq('user_id', params.id)
 
-  // Fetch upvoted posts using the new post_votes table
+  console.log('Subscriptions:', subscriptions);
+  console.log('Subscription error:', subscriptionError);
+
+  // Fetch upvoted posts using the post_votes table
   const { data: upvotedPosts } = await supabase
     .from('post_votes')
     .select('posts(*)')
@@ -73,12 +86,9 @@ export default async function UserProfile({ params }: PageProps) {
       <h2>Subscribed Subreddits</h2>
       <ul>
         {subscriptions && subscriptions.length > 0 ? (
-          subscriptions.map((sub: { subreddits: Subreddit | Subreddit[] }) => {
-            const subreddit = Array.isArray(sub.subreddits) ? sub.subreddits[0] : sub.subreddits;
-            return (
-              <li key={subreddit?.id}>{subreddit?.name}</li>
-            );
-          })
+          subscriptions.map((sub: Subscription) => (
+            <li key={sub.subreddit.id}>{sub.subreddit.name}</li>
+          ))
         ) : (
           <li>No subscriptions yet</li>
         )}
