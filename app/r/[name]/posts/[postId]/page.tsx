@@ -12,6 +12,7 @@ export default async function PostPage({ params }: PageProps) {
   const { subredditName, postId } = params
   const supabase = createClient()
 
+  console.log('Params:', params);
   console.log('Fetching post with:', { subredditName, postId });
 
   const { data: post, error } = await supabase
@@ -21,15 +22,17 @@ export default async function PostPage({ params }: PageProps) {
     .eq('subreddit_name', subredditName)
     .single()
 
-  console.log('Query result:', { post, error });
+  console.log('Supabase query result:', { post, error });
 
   if (error) {
     console.error('Error fetching post:', error);
+    // return <div>Error: {JSON.stringify(error)}</div>;
     notFound()
   }
 
   if (!post) {
     console.log('No post found');
+    // return <div>Error: No post found</div>;
     notFound()
   }
 
