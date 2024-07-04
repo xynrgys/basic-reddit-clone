@@ -10,24 +10,24 @@ export async function GET(
   const { postId } = params
 
   console.log('Querying Supabase for post:', postId);
-  const { data: post, error } = await supabase
+  const { data: posts, error } = await supabase
     .from('posts')
     .select('*')
     .eq('id', postId)
-    .single()
 
-  console.log('Supabase query result:', { post, error });
+  console.log('Supabase query result:', { posts, error });
 
   if (error) {
     console.error('Supabase error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  if (!post) {
+  if (!posts || posts.length === 0) {
     console.log('Post not found');
     return NextResponse.json({ error: 'Post not found' }, { status: 404 })
   }
 
+  const post = posts[0];
   console.log('Returning post:', post);
-  return post
+  return NextResponse.json(post)
 }
