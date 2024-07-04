@@ -3,23 +3,23 @@ import { notFound } from 'next/navigation'
 
 interface PageProps {
   params: {
-    subredditName: string
+    name: string
     postId: string
   }
 }
 
 export default async function PostPage({ params }: PageProps) {
-  const { subredditName, postId } = params
+  const { name, postId } = params
   const supabase = createClient()
 
   console.log('Params:', params);
-  console.log('Fetching post with:', { subredditName, postId });
+  console.log('Fetching post with:', { name, postId });
 
   const { data: post, error } = await supabase
     .from('posts')
     .select('*')
     .eq('id', postId)
-    .eq('subreddit_name', subredditName)
+    .eq('subreddit_name', name)
     .single()
 
   console.log('Supabase query result:', { post, error });
