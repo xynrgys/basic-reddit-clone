@@ -88,7 +88,7 @@ export default async function UserProfile({ params }: PageProps) {
       <h1>{user.email}'s Profile</h1>
       <h2>Total Upvotes Received: {totalUpvotesReceived}</h2>
      
-      <h2>Subscribed Subreddits</h2>
+      <h2 className="font-bold">Subscribed Subreddits</h2>
       <ul>
         {subscriptions && subscriptions.length > 0 ? (
           subscriptions.map((sub: Subscription) => (
@@ -99,7 +99,7 @@ export default async function UserProfile({ params }: PageProps) {
         )}
       </ul>
 
-      <h2>Upvoted Posts</h2>
+      <h2 className="font-bold">Upvoted Posts</h2>
       <ul>
         {upvotedPosts && upvotedPosts.length > 0 ? (
           upvotedPosts.map((vote: { posts: Post | Post[] }) => {
