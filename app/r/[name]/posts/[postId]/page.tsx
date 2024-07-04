@@ -1,7 +1,5 @@
 'use client'
 
-import { createClient } from '@/utils/supabase/server'
-import { notFound } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Comments from '@/components/Comments'  // Adjust this import path as necessary
 
@@ -15,39 +13,27 @@ interface PageProps {
 export default function PostPage({ params }: PageProps) {
   const { name, postId } = params
   const [post, setPost] = useState<any>(null)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchPost = async () => {
-      const supabase = createClient()
-      console.log('Fetching post with:', { name, postId });
-
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('id', postId)
-        .eq('subreddit_name', name)
-        .single()
-
-      console.log('Supabase query result:', { data, error });
-
-      if (error) {
-        console.error('Error fetching post:', error);
-        setError(error)
-      } else if (!data) {
-        console.log('No post found');
-        setError(new Error('No post found'))
-      } else {
-        console.log('Post found:', data);
+      try {
+        const response = await fetch(`/api/posts/${postId}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch post')
+        }
+        const data = await response.json()
         setPost(data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
       }
     }
 
     fetchPost()
-  }, [name, postId])
+  }, [postId])
 
   if (error) {
-    return <div>Error: {JSON.stringify(error)}</div>
+    return <div>Error: {error}</div>
   }
 
   if (!post) {
